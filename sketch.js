@@ -2,7 +2,9 @@ var serial; // variable to hold an instance of the serialport library
 var portName = 'COM4'; //rename to the name of your port
 var dataarray = []; //some data coming in over serial!
 var xPos = 0;
-let monoSynth, playing, freq, osc
+let monoSynth, playing, freq, osc, mod, freq2
+var smootharray = [];
+
 
 function setup() {
   serial = new p5.SerialPort();       // make a new instance of the serialport library
@@ -19,7 +21,9 @@ function setup() {
 
   let cnv = createCanvas(1200, 800);
   cnv.mousePressed(playOscillator);
+  //cnv.mousePressed(playSynth);
   osc = new p5.Oscillator('sine');
+  mod = new p5.Oscillator('sine');
   //monoSynth = new p5.MonoSynth();
   background(0x08, 0x16, 0x40);
 }
@@ -83,16 +87,22 @@ function graphData(newData) {
 
 
 function draw() {
-  stroke('rgba(100,25,0,0.25)'); // green
+  stroke('rgba(255,255,52,0.25)'); // green
   graphData(dataarray[0]);
-
   stroke('rgba(0,80,255,0.5)'); // blue
   graphData(dataarray[1]);
   xPos++;
 
-  freq = map(dataarray[0], 200, 2000, 100, 500);
+  freq = map(dataarray[0], 150, 1400, 60, 72);
+  freq2 = map(dataarray[1], 150, 1400, 5, 20);
+
+
   if (playing) {
-    osc.freq(freq);
+    mod.amp(1);
+    mod.freq(freq2);
+    osc.amp(mod);
+    osc.freq(midiToFreq(freq));
+
   }
 }
 
@@ -102,13 +112,20 @@ function playOscillator() {
   // starting an oscillator on a user gesture will enable audio
   // in browsers that have a strict autoplay policy.
   // See also: userStartAudio();
+  mod.disconnect();
   osc.start();
+  mod.start();
   playing = true;
 }
 
 /*
-function playSynth() {
+function mousePressed() {
   userStartAudio();
+}
+*/
+/*
+function playSynth() {
+//  userStartAudio();
   let note = map(dataarray[0], 200, 2000, 0, 1);
   switch (note) {
     case 0:
