@@ -19,13 +19,13 @@ function setup() {
   serial.open(portName);              // open a serial port
 
 
-  let cnv = createCanvas(1200, 800);
+  let cnv = createCanvas(screen.width, screen.height);
   cnv.mousePressed(playOscillator);
   //cnv.mousePressed(playSynth);
   osc = new p5.Oscillator('sine');
   mod = new p5.Oscillator('sine');
   //monoSynth = new p5.MonoSynth();
-  background(0x08, 0x16, 0x40);
+  background(0);
 }
 
 
@@ -79,34 +79,60 @@ function graphData(newData) {
   if (xPos >= width) {
     xPos = 0;
     // clear the screen by resetting the background:
-    background(0x08, 0x16, 0x40);
+    background(0);
   } else {
     // pass
   }
 }
 
-
 function draw() {
-  stroke('rgba(255,255,52,0.25)'); // green
+  stroke('rgba(255,255,0,0.8)'); // yellow
   graphData(dataarray[0]);
-  stroke('rgba(0,80,255,0.5)'); // blue
+  stroke('rgba(0,0,255,0.8)'); // blue
   graphData(dataarray[1]);
   xPos++;
 
-  freq = map(dataarray[0], 150, 1400, 60, 72);
-  freq2 = map(dataarray[1], 150, 1400, 5, 20);
 
+  freq = map(dataarray[0], 100, 1100, 1, 8);
+  freq2 = map(dataarray[1], 100, 1100, 5, 20);
+  freq = Math.round(freq);
 
   if (playing) {
     mod.amp(1);
     mod.freq(freq2);
     osc.amp(mod);
-    osc.freq(midiToFreq(freq));
+
+    // MIDI frequencies for bFlat Blues: 58, 61, 63, 64, 65, 68, 70
+    // MIDI frequencies for bFlat Raga Lalit Scale: 58, 59, 62, 63, 64, 66, 69. 70
+    switch (freq) {
+      case 1:
+        osc.freq(midiToFreq(58));
+        break;
+      case 2:
+        osc.freq(midiToFreq(59));
+        break;
+      case 3:
+        osc.freq(midiToFreq(62));
+        break;
+      case 4:
+        osc.freq(midiToFreq(63));
+        break;
+      case 5:
+        osc.freq(midiToFreq(64));
+        break;
+      case 6:
+        osc.freq(midiToFreq(66));
+        break;
+      case 7:
+        osc.freq(midiToFreq(69));
+        break;
+      case 8:
+        osc.freq(midiToFreq(70));
+        break;
+    }
 
   }
 }
-
-
 
 function playOscillator() {
   // starting an oscillator on a user gesture will enable audio
@@ -117,23 +143,3 @@ function playOscillator() {
   mod.start();
   playing = true;
 }
-
-/*
-function mousePressed() {
-  userStartAudio();
-}
-*/
-/*
-function playSynth() {
-//  userStartAudio();
-  let note = map(dataarray[0], 200, 2000, 0, 1);
-  switch (note) {
-    case 0:
-      monoSynth.play('Fb4');
-      break;
-    case 1:
-      monoSynth.play('G4');
-      break;
-    }
-}
-*/

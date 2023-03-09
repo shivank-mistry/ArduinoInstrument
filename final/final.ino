@@ -23,7 +23,7 @@ void loop() {
   delayMicroseconds(10); // wait 10 microseconds
   digitalWrite(trigPin, LOW); // turn the ultrasonic wave off
   distance = pulseIn(echoPin, HIGH);
-  distance = constrain(distance, 150, 1400);
+  distance = constrain(distance, 100, 1100);
 
 
   // -- first ultrasonic sensor --- // 
@@ -31,7 +31,7 @@ void loop() {
   delayMicroseconds(10); // wait 10 microseconds
   digitalWrite(trigPin2, LOW); // turn the ultrasonic wave off
   distance2 = pulseIn(echoPin2, HIGH);
-  distance2 = constrain(distance2, 150, 1400);
+  distance2 = constrain(distance2, 100, 1100);
 
 
 // store data into constructed array and sent to serial. 
