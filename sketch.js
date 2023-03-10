@@ -2,8 +2,7 @@ var serial; // variable to hold an instance of the serialport library
 var portName = 'COM4'; //rename to the name of your port
 var dataarray = []; //some data coming in over serial!
 var xPos = 0;
-let monoSynth, playing, freq, osc, mod, freq2
-var smootharray = [];
+let playing, freq, osc, mod, freq2
 
 
 function setup() {
@@ -19,12 +18,10 @@ function setup() {
   serial.open(portName);              // open a serial port
 
 
-  let cnv = createCanvas(screen.width, screen.height);
-  cnv.mousePressed(playOscillator);
-  //cnv.mousePressed(playSynth);
-  osc = new p5.Oscillator('sine');
-  mod = new p5.Oscillator('sine');
-  //monoSynth = new p5.MonoSynth();
+  let cnv = createCanvas(screen.width, screen.height); // canvas size is screen size.
+  cnv.mousePressed(playOscillator); // when mouse is pressed on screen, it starts the oscillators.
+  osc = new p5.Oscillator('sine'); // intialize carrier
+  mod = new p5.Oscillator('sine'); // initialize modulator
   background(0);
 }
 
@@ -43,7 +40,7 @@ function serverConnected() {
 }
 
 function portOpen() {
-  print('the serial port opened.')
+  print('the serial port opened.');
 }
 
 function serialError(err) {
@@ -93,17 +90,22 @@ function draw() {
   xPos++;
 
 
-  freq = map(dataarray[0], 100, 1100, 1, 8);
-  freq2 = map(dataarray[1], 100, 1100, 5, 20);
-  freq = Math.round(freq);
+  freq = map(dataarray[0], 100, 1100, 1, 8); // maps frequency from 1-8 as I need 8 notes in the scale.
+  freq2 = map(dataarray[1], 100, 1100, 5, 20); // maps frequency from 5-20 hz for the modulator wave.
+  freq = Math.round(freq); // rounds to nearest whole number
 
   if (playing) {
-    mod.amp(1);
-    mod.freq(freq2);
-    osc.amp(mod);
+    mod.amp(1); // sets amplitude to 1, the highest.
+    mod.freq(freq2); // sets the frequency of the modulator to equal sensor value mapped from 5-20
+    osc.amp(mod); // this is the fun! maps the amp of carrier to the entire modulator wave
 
     // MIDI frequencies for bFlat Blues: 58, 61, 63, 64, 65, 68, 70
     // MIDI frequencies for bFlat Raga Lalit Scale: 58, 59, 62, 63, 64, 66, 69. 70
+
+
+    // this switch case matches the 8 notes in the scale to midi numbers corresponding
+    // to notes in the scale. midiToFreq() is a helpful function that converts the midi notation to
+    // exact frequency of the note.
     switch (freq) {
       case 1:
         osc.freq(midiToFreq(58));
@@ -136,10 +138,9 @@ function draw() {
 
 function playOscillator() {
   // starting an oscillator on a user gesture will enable audio
-  // in browsers that have a strict autoplay policy.
-  // See also: userStartAudio();
-  mod.disconnect();
-  osc.start();
-  mod.start();
-  playing = true;
+  // in browsers that have a strict autoplay policy like Chrome (my primary browser)
+  mod.disconnect(); // turns off the modulator wave so it doesn't make noise.
+  osc.start(); // start carrier
+  mod.start(); // start modulator
+  playing = true; // starts playing!
 }

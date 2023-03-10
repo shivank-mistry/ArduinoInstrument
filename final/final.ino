@@ -4,7 +4,7 @@ int trigPin = 3;
 int trigPin2 = 10;
 int echoPin2 = 9;
 
-
+// non-constant values
 int distance;
 int distance2; 
 
@@ -23,15 +23,15 @@ void loop() {
   delayMicroseconds(10); // wait 10 microseconds
   digitalWrite(trigPin, LOW); // turn the ultrasonic wave off
   distance = pulseIn(echoPin, HIGH);
-  distance = constrain(distance, 100, 1100);
+  distance = constrain(distance, 100, 1100); // map distance between 100-1100.
 
 
-  // -- first ultrasonic sensor --- // 
+  // -- second ultrasonic sensor --- // 
   digitalWrite(trigPin2, HIGH); // send out the ultrasonic wave
   delayMicroseconds(10); // wait 10 microseconds
   digitalWrite(trigPin2, LOW); // turn the ultrasonic wave off
   distance2 = pulseIn(echoPin2, HIGH);
-  distance2 = constrain(distance2, 100, 1100);
+  distance2 = constrain(distance2, 100, 1100); // map distance between 100-1100.
 
 
 // store data into constructed array and sent to serial. 
